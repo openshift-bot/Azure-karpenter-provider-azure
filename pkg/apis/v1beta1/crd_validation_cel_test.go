@@ -1425,10 +1425,10 @@ var _ = Describe("CEL/Validation", func() {
 				ObjectMeta: metav1.ObjectMeta{Name: strings.ToLower(randomdata.SillyName())},
 				Spec: v1beta1.AKSNodeClassSpec{
 					MarketplaceImage: &v1beta1.MarketplaceImage{
-						Publisher: lo.ToPtr("azureopenshift"),
-						Offer:     lo.ToPtr("aro4"),
-						SKU:       lo.ToPtr("aro_422-v2"),
-						Version:   lo.ToPtr("9.8.20260428"),
+						Publisher: "azureopenshift",
+						Offer:     "aro4",
+						SKU:       "aro_422-v2",
+						Version:   "9.8.20260428",
 					},
 				},
 			}
@@ -1440,16 +1440,16 @@ var _ = Describe("CEL/Validation", func() {
 				ObjectMeta: metav1.ObjectMeta{Name: strings.ToLower(randomdata.SillyName())},
 				Spec: v1beta1.AKSNodeClassSpec{
 					MarketplaceImage: &v1beta1.MarketplaceImage{
-						Publisher: lo.ToPtr(""),
-						Offer:     lo.ToPtr("aro4"),
-						SKU:       lo.ToPtr("aro_422-v2"),
-						Version:   lo.ToPtr("9.8.20260428"),
+						Publisher: "",
+						Offer:     "aro4",
+						SKU:       "aro_422-v2",
+						Version:   "9.8.20260428",
 					},
 				},
 			}
 			err := env.Client.Create(ctx, nodeClass)
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(ContainSubstring("publisher, offer, sku and version must all be set"))
+			Expect(err.Error()).To(ContainSubstring("spec.marketplaceImage.publisher: Required value"))
 		})
 	})
 

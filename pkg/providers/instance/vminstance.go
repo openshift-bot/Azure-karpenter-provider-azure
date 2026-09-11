@@ -624,10 +624,10 @@ func newVMObject(opts *createVMOptions) *armcompute.VirtualMachine {
 	if opts.LaunchTemplate.MarketplaceImage != nil {
 		m := opts.LaunchTemplate.MarketplaceImage
 		vm.Properties.StorageProfile.ImageReference = &armcompute.ImageReference{
-			Publisher: m.Publisher,
-			Offer:     m.Offer,
-			SKU:       m.SKU,
-			Version:   m.Version,
+			Publisher: &m.Publisher,
+			Offer:     &m.Offer,
+			SKU:       &m.SKU,
+			Version:   &m.Version,
 		}
 	} else {
 		setImageReference(vm.Properties, opts.LaunchTemplate.ImageID, opts.UseSIG)
