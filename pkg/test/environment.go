@@ -75,6 +75,7 @@ type Environment struct {
 	VirtualMachineExtensionsAPI     *fake.VirtualMachineExtensionsAPI
 	NetworkInterfacesAPI            *fake.NetworkInterfacesAPI
 	CommunityImageVersionsAPI       *fake.CommunityGalleryImageVersionsAPI
+	VirtualMachineImagesAPI         *fake.VirtualMachineImagesAPI
 	NodeImageVersionsAPI            *fake.NodeImageVersionsAPI
 	SKUsAPI                         *fake.ResourceSKUsAPI
 	PricingAPI                      *fake.PricingAPI
@@ -157,6 +158,7 @@ func NewRegionalEnvironment(ctx context.Context, env *coretest.Environment, regi
 	pricingAPI := &fake.PricingAPI{}
 	skusAPI := &fake.ResourceSKUsAPI{Location: region}
 	communityImageVersionsAPI := &fake.CommunityGalleryImageVersionsAPI{}
+	virtualMachineImagesAPI := &fake.VirtualMachineImagesAPI{}
 	loadBalancersAPI := &fake.LoadBalancersAPI{}
 	networkSecurityGroupAPI := &fake.NetworkSecurityGroupAPI{}
 	nodeImageVersionsAPI := &fake.NodeImageVersionsAPI{}
@@ -184,7 +186,7 @@ func NewRegionalEnvironment(ctx context.Context, env *coretest.Environment, regi
 	// Providers
 	pricingProvider := pricing.NewProvider(ctx, azureEnv, pricingAPI, region, make(chan struct{}))
 	kubernetesVersionProvider := kubernetesversion.NewKubernetesVersionProvider(region, env.KubernetesInterface, kubernetesVersionCache, aksManagedClustersAPI)
-	imageFamilyProvider := imagefamily.NewProvider(communityImageVersionsAPI, region, subscription, nodeImageVersionsAPI, nodeImagesCache)
+	imageFamilyProvider := imagefamily.NewProvider(communityImageVersionsAPI, virtualMachineImagesAPI, region, subscription, nodeImageVersionsAPI, nodeImagesCache)
 	quotaProvider := quota.NewProvider(usageAPI, quotaCategoryVMFamilyMappingAPI, region, clock.RealClock{})
 	instanceTypesProvider := instancetype.NewDefaultProvider(
 		region,
@@ -249,6 +251,7 @@ func NewRegionalEnvironment(ctx context.Context, env *coretest.Environment, regi
 		loadBalancersAPI,
 		networkSecurityGroupAPI,
 		communityImageVersionsAPI,
+		virtualMachineImagesAPI,
 		nodeImageVersionsAPI,
 		nodeBootstrappingAPI,
 		skusAPI,
@@ -341,6 +344,7 @@ func NewRegionalEnvironment(ctx context.Context, env *coretest.Environment, regi
 		VirtualMachineExtensionsAPI:     virtualMachinesExtensionsAPI,
 		NetworkInterfacesAPI:            networkInterfacesAPI,
 		CommunityImageVersionsAPI:       communityImageVersionsAPI,
+		VirtualMachineImagesAPI:         virtualMachineImagesAPI,
 		NodeImageVersionsAPI:            nodeImageVersionsAPI,
 		LoadBalancersAPI:                loadBalancersAPI,
 		NetworkSecurityGroupAPI:         networkSecurityGroupAPI,
@@ -406,6 +410,7 @@ func (env *Environment) Reset(ctx context.Context) {
 	env.CapacityReservationGroupsAPI.Reset()
 	env.CapacityReservationsAPI.Reset()
 	env.CommunityImageVersionsAPI.Reset()
+	env.VirtualMachineImagesAPI.Reset()
 	env.NodeImageVersionsAPI.Reset()
 	env.NodeBootstrappingAPI.Reset()
 	env.SKUsAPI.Reset()
