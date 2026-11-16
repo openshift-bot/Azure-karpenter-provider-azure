@@ -231,7 +231,8 @@ func (p *Provider) getOpenShiftTemplate(ctx context.Context, nodeClass *v1beta1.
 	subnetID := lo.Ternary(nodeClass.Spec.VNETSubnetID != nil, lo.FromPtr(nodeClass.Spec.VNETSubnetID), options.FromContext(ctx).SubnetID)
 
 	template := &Template{
-		SubnetID: subnetID,
+		SubnetID:             subnetID,
+		StorageProfileSizeGB: lo.FromPtr(nodeClass.Spec.OSDiskSizeGB),
 	}
 
 	if nodeClass.HasMarketplaceImage() {
