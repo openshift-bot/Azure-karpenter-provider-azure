@@ -173,7 +173,7 @@ func (p *DefaultProvider) List(
 		ImageFamily:              lo.FromPtr(nodeClass.Spec.ImageFamily),
 		OSDiskSizeGB:             nodeClass.Spec.OSDiskSizeGB,
 		OSDiskType:               lo.FromPtr(nodeClass.Spec.OSDiskType),
-		MaxPods:                  utils.GetMaxPods(nodeClass, opts.NetworkPlugin, opts.NetworkPluginMode),
+		MaxPods:                  openShiftMaxPods(nodeClass, opts.ProvisionMode, opts.NetworkPlugin, opts.NetworkPluginMode),
 		EncryptionAtHost:         nodeClass.GetEncryptionAtHost(),
 		TrustedLaunch:            nodeClass.IsTrustedLaunchEnabled(),
 		GPUMode:                  nodeClass.GetGPUMode(),
