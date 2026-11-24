@@ -146,6 +146,8 @@ Three levels, as described in [CONTRIBUTING.md](./CONTRIBUTING.md):
 - **E2E tests** — Ginkgo with Gomega for assertions, under `test/`, real cluster and real Azure clients.
 
 A test is only useful if it would fail when the intended behavior regresses.
+In table-driven tests, mark expected failures explicitly (for example, `wantErr: true`) rather than
+inferring them from a missing `want` value. Assert both the error and the returned value when applicable.
 
 Before adding a test, read the existing tests for the file you changed — usually the sibling
 `_test.go` file, otherwise the suite covering that package. Match what is already there: the same

@@ -126,12 +126,6 @@ var _ = Describe("Hash", func() {
 		Entry("ArtifactStreaming.Enabled", v1beta1.AKSNodeClass{Spec: v1beta1.AKSNodeClassSpec{ArtifactStreaming: &v1beta1.ArtifactStreaming{Enabled: lo.ToPtr(true)}}}),
 		Entry("GPU.Nvidia.ManagementMode", v1beta1.AKSNodeClass{Spec: v1beta1.AKSNodeClassSpec{GPU: &v1beta1.GPU{Nvidia: &v1beta1.NvidiaGPU{ManagementMode: lo.ToPtr(v1beta1.ManagementModeManaged)}}}}),
 		Entry("NodePublicIP.Enabled", v1beta1.AKSNodeClass{Spec: v1beta1.AKSNodeClassSpec{NodePublicIP: &v1beta1.NodePublicIP{Enabled: lo.ToPtr(true)}}}),
-		Entry("MarketplaceImage", v1beta1.AKSNodeClass{Spec: v1beta1.AKSNodeClassSpec{MarketplaceImage: &v1beta1.MarketplaceImage{
-			Publisher: "azureopenshift",
-			Offer:     "aro4",
-			SKU:       "aro_422-v2",
-			Version:   "9.8.20260428",
-		}}}),
 		Entry("UserData", v1beta1.AKSNodeClass{Spec: v1beta1.AKSNodeClassSpec{UserData: lo.ToPtr(`{"ignition":{"version":"3.2.0"}}`)}}),
 	)
 	Context("NodePublicIP", func() {
@@ -252,6 +246,23 @@ var _ = Describe("Hash", func() {
 		_ = nodeClass.Hash()
 
 		Expect(nodeClass).To(Equal(original))
+	})
+	It("should change hash when marketplace images are configured", func() {
+		hash := nodeClass.Hash()
+		nodeClass.Spec.MarketplaceImages = []string{"azureopenshift:aro4:aro_422-v2:9.8.20260428"}
+		Expect(nodeClass.Hash()).NotTo(Equal(hash))
+	})
+	It("should change hash when a marketplace image version changes", func() {
+		nodeClass.Spec.MarketplaceImages = []string{"publisher:offer:amd64:1.0.0", "publisher:offer:arm64:1.0.0"}
+		hash := nodeClass.Hash()
+		nodeClass.Spec.MarketplaceImages[0] = "publisher:offer:amd64:2.0.0"
+		Expect(nodeClass.Hash()).NotTo(Equal(hash))
+	})
+	It("should not change hash when marketplace images are reordered", func() {
+		nodeClass.Spec.MarketplaceImages = []string{"publisher:offer:amd64:1.0.0", "publisher:offer:arm64:1.0.0"}
+		hash := nodeClass.Hash()
+		nodeClass.Spec.MarketplaceImages = []string{"publisher:offer:arm64:1.0.0", "publisher:offer:amd64:1.0.0"}
+		Expect(nodeClass.Hash()).To(Equal(hash))
 	})
 	It("should not change hash when tags are re-ordered", func() {
 		hash := nodeClass.Hash()
